@@ -1,0 +1,44 @@
+<div class="services-page">
+  <div class="page-header">
+    <h1>Services</h1>
+    <button class="refresh-btn" (click)="loadServices()">↻ Rafraîchir</button>
+  </div>
+
+  <div class="filters">
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Rechercher un service..."
+      [(ngModel)]="search"
+      (input)="applyFilters()"
+    />
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement des services...</div>
+
+  <ng-container *ngIf="!loading">
+    <div class="results-count">{{ filtered.length }} service(s) trouvé(s)</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Namespace</th>
+          <th>Type</th>
+          <th>Cluster IP</th>
+          <th>Ports</th>
+          <th>Age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let service of filtered">
+          <td class="name-cell">{{ service.metadata?.name }}</td>
+          <td><span class="namespace-badge">{{ service.metadata?.namespace }}</span></td>
+          <td><span class="badge" [ngClass]="getTypeClass(service)">{{ getType(service) }}</span></td>
+          <td class="ip-cell">{{ getClusterIP(service) }}</td>
+          <td class="ports-cell">{{ getPorts(service) }}</td>
+          <td class="age-cell">{{ getAge(service) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</div>

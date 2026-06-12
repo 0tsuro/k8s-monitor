@@ -1,0 +1,56 @@
+<div class="pods-page">
+  <div class="page-header">
+    <h1>Pods</h1>
+    <button class="refresh-btn" (click)="loadPods()">↻ Rafraîchir</button>
+  </div>
+
+  <div class="filters">
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Rechercher un pod..."
+      [(ngModel)]="search"
+      (input)="applyFilters()"
+    />
+    <div class="filter-tabs">
+      <button [class.active]="selectedStatus === 'all'"
+        (click)="selectedStatus = 'all'; applyFilters()">Tous</button>
+      <button [class.active]="selectedStatus === 'Running'"
+        (click)="selectedStatus = 'Running'; applyFilters()">Running</button>
+      <button [class.active]="selectedStatus === 'Pending'"
+        (click)="selectedStatus = 'Pending'; applyFilters()">Pending</button>
+      <button [class.active]="selectedStatus === 'Failed'"
+        (click)="selectedStatus = 'Failed'; applyFilters()">Failed</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement des pods...</div>
+
+  <ng-container *ngIf="!loading">
+    <div class="results-count">{{ filtered.length }} pod(s) trouvé(s)</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Namespace</th>
+          <th>Statut</th>
+          <th>Conteneurs</th>
+          <th>Restarts</th>
+          <th>Age</th>
+          <th>Node</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pod of filtered">
+          <td class="name-cell">{{ pod.metadata?.name }}</td>
+          <td><span class="namespace-badge">{{ pod.metadata?.namespace }}</span></td>
+          <td><span class="badge" [ngClass]="getStatusClass(pod)">{{ getStatus(pod) }}</span></td>
+          <td>{{ getContainerCount(pod) }}</td>
+          <td [class.red]="getRestarts(pod) > 0">{{ getRestarts(pod) }}</td>
+          <td class="age-cell">{{ getAge(pod) }}</td>
+          <td class="node-cell">{{ pod.spec?.nodeName }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</div>
